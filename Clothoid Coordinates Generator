@@ -1,0 +1,41 @@
+from scipy.integrate import quad
+from numpy import log, sin, cos
+forward = []
+
+"""
+for r in range (1,177):
+	down = 9900+r*(-100)
+	print(310 , "," , down , "," , 100-10*r)
+"""
+for k in range (1,444):
+	forward.append([])
+	
+for i in range(1,444): #number of points generated
+	def integrand(x):
+		return sin(x**2)
+	s = str(quad(integrand, 0, i/250)) # quad is the method of integral that the computer uses, "i/250" helps increment the integral upper limit by small amounts
+	s = s[1:8] #takes the first few numbers of the integral result, otherwise it will generate an unwanted uncertainty value as well
+	s = round(15*float(s),4) #15*float transforms the curve to fit, round(xxxxx,4) helps round to 4dp
+
+	def integrand(y):
+		return cos(y**2)
+	c = str(quad(integrand, 0, i/250))
+	c = c[1:8]
+	c = round(15*float(c),4) 
+
+	z = round(i*0.001,6) #generates a z point so the track does not intersect itself
+	forward[i-1].append([c])
+	forward[i-1].append([z])
+	forward[i-1].append([s])
+	print(forward[i-1]) #prints the coords, need to remove square brackets in text edit
+	
+
+forward.reverse()
+for j in range(1,444):
+	forward[j-1][0][0] = round(19.9 - float(forward[j-1][0][0]),4) #makes the x coordinate line up with the end of the forward bit
+	forward[j-1][1][0] = z+j*0.001 #replaces reflected y coords. takes the last saved z value and adds onto it
+	print(forward[j-1][0] , " , " , forward[j-1][1] , " ," , forward[j-1][2])
+
+#some cleanup is needed. Remove the erroneous points (at the start and end) due to problems with integration 
+#using command + F on TextEdit on Mac, delete the spaces and square brackets (replace them with nothing)
+#add the coordinates (0,0,0), (20,0,0), (0,20,0), and (20,20,0) at the end to help scale the plotted grpah
